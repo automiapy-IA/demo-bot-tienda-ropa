@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Demo Bot de Ventas | Automia</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+background:linear-gradient(135deg,#0f0f1a 0%,#1a1a2e 100%);
+min-height:100vh;
+padding:15px;
+}
+.wrapper{
+max-width:400px;
+margin:0 auto;
+}
+.hero{
+text-align:center;
+margin-bottom:16px;
+color:white;
+}
+.hero h1{
+font-size:18px;
+margin-bottom:6px;
+line-height:1.3;
+}
+.hero p{
+font-size:11px;
+opacity:0.7;
+}
+.phone{
+background:#0b141a;
+border-radius:30px;
+padding:6px;
+box-shadow:0 15px 40px rgba(0,0,0,0.4);
+}
+.screen{
+background:#0b141a;
+border-radius:25px;
+overflow:hidden;
+height:420px;
+display:flex;
+flex-direction:column;
+}
+.header{
+background:#202c33;
+padding:10px 12px;
+display:flex;
+align-items:center;
+gap:10px;
+}
+.avatar{
+width:36px;
+height:36px;
+background:linear-gradient(135deg,#e94560,#ff6b6b);
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:16px;
+}
+.info h3{color:#e9edef;font-size:13px}
+.info p{color:#00d26a;font-size:10px}
+.messages{
+flex:1;
+padding:10px;
+overflow-y:auto;
+background:#111b21;
+}
+.msg{
+max-width:85%;
+padding:7px 10px;
+border-radius:10px;
+margin-bottom:5px;
+font-size:12px;
+line-height:1.4;
+word-wrap:break-word;
+}
+.msg.sent{
+background:#005c4b;
+color:#e9edef;
+margin-left:auto;
+border-bottom-right-radius:2px;
+}
+.msg.recv{
+background:#202c33;
+color:#e9edef;
+border-bottom-left-radius:2px;
+}
+.msg .t{
+font-size:8px;
+color:rgba(255,255,255,.3);
+text-align:right;
+margin-top:2px;
+}
+.input-area{
+background:#202c33;
+padding:8px 10px;
+display:flex;
+gap:8px;
+}
+.input-area input{
+flex:1;
+background:#2a3942;
+border:none;
+padding:9px 12px;
+border-radius:18px;
+color:#e9edef;
+font-size:13px;
+}
+.input-area input:focus{
+outline:none;
+background:#3a4952;
+}
+.input-area input::placeholder{color:#8696a0}
+.input-area button{
+background:linear-gradient(135deg,#00a884,#00d26a);
+border:none;
+width:36px;
+height:36px;
+border-radius:50%;
+cursor:pointer;
+display:flex;
+align-items:center;
+justify-content:center;
+flex-shrink:0;
+}
+.input-area button svg{
+fill:white;
+width:16px;
+height:16px;
+}
+.quick{
+display:flex;
+flex-wrap:wrap;
+gap:4px;
+justify-content:center;
+margin-top:10px;
+}
+.qbtn{
+background:rgba(255,255,255,.1);
+color:white;
+border:none;
+padding:6px 9px;
+border-radius:10px;
+cursor:pointer;
+font-size:10px;
+}
+.qbtn:hover{background:rgba(255,255,255,.2)}
+.qbtn:active{background:rgba(255,255,255,.3)}
+.benefits{
+margin-top:12px;
+background:rgba(255,255,255,.05);
+border-radius:10px;
+padding:10px;
+}
+.benefits div{
+color:rgba(255,255,255,.85);
+font-size:10px;
+padding:3px 0;
+}
+.cta{
+margin-top:12px;
+background:linear-gradient(135deg,#25D366,#128C7E);
+border-radius:10px;
+padding:12px;
+text-align:center;
+}
+.cta p{
+color:white;
+font-size:11px;
+margin-bottom:8px;
+}
+.cta a{
+display:inline-block;
+background:white;
+color:#128C7E;
+padding:9px 18px;
+border-radius:18px;
+text-decoration:none;
+font-size:11px;
+font-weight:700;
+}
+.rst{
+background:transparent;
+border:1px solid rgba(255,255,255,.2);
+color:rgba(255,255,255,.5);
+margin-top:10px;
+width:100%;
+padding:7px;
+border-radius:8px;
+cursor:pointer;
+font-size:10px;
+}
+.typing{
+display:flex;
+gap:3px;
+padding:7px 10px;
+background:#202c33;
+border-radius:10px;
+width:fit-content;
+margin-bottom:5px;
+}
+.typing span{
+width:5px;
+height:5px;
+background:#667;
+border-radius:50%;
+animation:bounce 1s infinite;
+}
+.typing span:nth-child(2){animation-delay:.15s}
+.typing span:nth-child(3){animation-delay:.3s}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+.qr{
+background:white;
+padding:6px;
+border-radius:6px;
+display:inline-block;
+margin-top:3px;
+}
+.qr img{width:80px;height:80px}
+.qr p{font-size:8px;color:#888;margin-top:3px;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrapper">
+<div class="hero">
+<h1>🚀 Mirá lo que este bot puede hacer por tu negocio</h1>
+<p>Probá escribiendo como si fueras un cliente</p>
+</div>
+<div class="phone">
+<div class="screen">
+<div class="header">
+<div class="avatar">👗</div>
+<div class="info"><h3>Tu Tienda</h3><p>en línea</p></div>
+</div>
+<div class="messages" id="chat"></div>
+<div class="input-area">
+<input type="text" id="input" placeholder="Escribí algo..." onkeydown="if(event.key==='Enter')send()">
+<button onclick="send()"><svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button>
+</div>
+</div>
+</div>
+<div class="quick">
+<button class="qbtn" onclick="q('Hola')">Saludar</button>
+<button class="qbtn" onclick="q('Qué tienen?')">Productos</button>
+<button class="qbtn" onclick="q('Quiero remera y jean')">2 cosas</button>
+<button class="qbtn" onclick="elegirAuto()">Elegir</button>
+<button class="qbtn" onclick="q('Dale')">Confirmar</button>
+<button class="qbtn" onclick="q('Otro modelo')">Ver otro</button>
+<button class="qbtn" onclick="q('Eso es todo')">Cerrar</button>
+<button class="qbtn" onclick="q('Donde quedamos?')">Retomar</button>
+</div>
+<div class="benefits">
+<div>✅ Atiende 24/7 automáticamente</div>
+<div>✅ Responde al instante, no perdés ventas</div>
+<div>✅ Cobra con Pagopar o Bancard</div>
+<div>✅ 100% personalizado a tu negocio</div>
+</div>
+<div class="cta">
+<p><strong>¿Querés uno para tu negocio?</strong></p>
+<a href="https://wa.me/595992954169?text=Hola!%20Vi%20el%20demo%20del%20bot%20y%20me%20interesa" target="_blank">💬 Hablemos por WhatsApp</a>
+</div>
+<button class="rst" onclick="reset()">🔄 Reiniciar demo</button>
+</div>
+<script>
+var CAT={
+remeras:[
+{id:'r1',nombre:'remera lisa',colores:['negra','blanca','gris'],talles:['S','M','L','XL'],precio:85000},
+{id:'r2',nombre:'remera estampada',colores:['negra','blanca'],talles:['S','M','L'],precio:95000},
+{id:'r3',nombre:'remera oversize',colores:['negra','beige'],talles:['M','L','XL'],precio:110000}
+],
+jeans:[
+{id:'j1',nombre:'jean slim',colores:['azul','negro'],talles:['30','32','34','36'],precio:180000},
+{id:'j2',nombre:'jean mom',colores:['celeste','azul'],talles:['28','30','32'],precio:195000}
+],
+buzos:[
+{id:'b1',nombre:'hoodie',colores:['gris','negro','bordo'],talles:['S','M','L','XL'],precio:165000}
+],
+camperas:[
+{id:'c1',nombre:'campera de jean',colores:['azul','negra'],talles:['S','M','L'],precio:250000}
+],
+accesorios:[
+{id:'a1',nombre:'gorra',colores:['negra','blanca'],talles:['único'],precio:65000},
+{id:'a2',nombre:'riñonera',colores:['negra','beige'],talles:['único'],precio:85000}
+]
+};
+
+var MARCAS=['nike','adidas','puma','lacoste','gucci','zara'];
+var S={nombre:null,saludado:false,carrito:[],actual:null,cola:[],esperando:null};
+
+function fmt(n){return n.toLocaleString('es-PY')+' Gs';}
+function pick(a){return a[Math.floor(Math.random()*a.length)];}
+
+function norm(c){
+if(!c)return null;
+var m={'negro':'negra','blancos':'blanca','blanco':'blanca','negros':'negra','grises':'gris','azules':'azul'};
+return m[c.toLowerCase()]||c.toLowerCase();
+}
+
+function findColor(p,c){
+if(!p||!c)return null;
+var n=norm(c);
+for(var i=0;i<p.colores.length;i++){
+var x=p.colores[i];
+if(norm(x)===n||x.indexOf(n)>=0)return x;
+}
+return null;
+}
+
+function randProd(cat,excluir){
+var lista=[];
+for(var i=0;i<CAT[cat].length;i++){
+if(!excluir||CAT[cat][i].id!==excluir)lista.push(CAT[cat][i]);
+}
+if(lista.length===0)return CAT[cat][0];
+return lista[Math.floor(Math.random()*lista.length)];
+}
+
+function getCat(){
+if(!S.actual)return null;
+for(var cat in CAT){
+for(var i=0;i<CAT[cat].length;i++){
+if(CAT[cat][i].id===S.actual.producto.id)return cat;
+}
+}
+return null;
+}
+
+function parse(t){
+t=t.toLowerCase();
+var r={cats:[],color:null,talle:null,saludo:false,confirma:false,cierra:false,catalogo:false,envio:false,marca:null,datos:null,quiereOtro:false};
+
+if(/remera|camiseta/.test(t))r.cats.push('remeras');
+if(/jean|pantalon/.test(t))r.cats.push('jeans');
+if(/buzo|hoodie/.test(t))r.cats.push('buzos');
+if(/campera/.test(t))r.cats.push('camperas');
+if(/gorra|riñonera|accesorio/.test(t))r.cats.push('accesorios');
+
+var cm=t.match(/(negr[oa]?|blanc[oa]?|gris|azul|celeste|beige|bordo)/i);
+if(cm)r.color=norm(cm[1]);
+var tm=t.match(/\b(xs|s|m|l|xl|\d{2})\b/i);
+if(tm)r.talle=tm[1].toUpperCase();
+
+r.saludo=/^(hola|buenas|hey)[!,.\s]*$/i.test(t)||/^hola[,\s]/i.test(t);
+r.confirma=/^(si|sí|dale|ok|va|bueno|listo|la quiero|ese|esa|perfecto)[!.\s]*$/i.test(t);
+r.cierra=/eso es todo|nada más|nada mas|solo eso/.test(t);
+r.catalogo=/qu[eé].*(tienen|hay|tenes)|productos/.test(t);
+r.envio=/env[ií]o|mandan/.test(t);
+r.quiereOtro=/otro|otra|solo ese|solo esa|más opciones|hay más|tienen más|diferente|ver otro/.test(t);
+r.dondeQuedamos=/donde quedamos|en qué estábamos|en que estabamos|qué estaba|que estaba|seguimos|continuar|retomar/.test(t);
+
+for(var i=0;i<MARCAS.length;i++){
+if(t.indexOf(MARCAS[i])>=0){r.marca=MARCAS[i];break;}
+}
+var dm=t.match(/([a-záéíóúñ]{2,})\s+(\d{6,})/i);
+if(dm)r.datos={nombre:dm[1],ci:dm[2]};
+return r;
+}
+
+function mostrarProd(prod,cat,pend,pre){
+S.actual={producto:prod,color:null,talle:null};
+if(prod.talles.length===1&&prod.talles[0].toLowerCase()==='único')S.actual.talle='único';
+S.esperando='color';
+var pt=pend&&pend.length?'\nDespués vemos '+pend.join(' y ')+'.':'';
+return (pre||'')+'Tengo '+prod.nombre+', '+fmt(prod.precio)+'.\nColores: '+prod.colores.join(', ')+pt+'\n\n¿Cuál te gusta?';
+}
+
+function resp(txt){
+var p=parse(txt);
+
+// Datos
+if(p.datos||S.esperando==='datos'){
+var dm=txt.match(/([a-záéíóúñ]{2,})\s+(\d+)/i);
+if(dm){
+S.nombre=dm[1].charAt(0).toUpperCase()+dm[1].slice(1);
+S.esperando=null;
+var env=25000+Math.floor(Math.random()*15000);
+var sub=0;
+for(var i=0;i<S.carrito.length;i++)sub+=S.carrito[i].producto.precio;
+var r='Perfecto '+S.nombre+'!\n\n';
+if(S.carrito.length>1){
+r+='Tu pedido:\n';
+for(var i=0;i<S.carrito.length;i++){
+var it=S.carrito[i];
+r+='• '+it.producto.nombre+' '+it.color+' '+it.talle+'\n';
+}
+r+='\nSubtotal: '+fmt(sub)+'\n';
+}else{
+var it=S.carrito[0];
+r+=it.producto.nombre+' '+it.color+' '+it.talle+' - '+fmt(it.producto.precio)+'\n';
+}
+r+='Envío: '+fmt(env)+'\nTotal: '+fmt(sub+env)+'\n\nTe mando el link:';
+setTimeout(addQR,800);
+setTimeout(function(){addMsg('Listo '+S.nombre+'! Cuando realices el pago te contactamos para coordinar la entrega.\n\nGracias por tu compra.',false);},2000);
+return r;
+}
+return 'Pasame nombre y teléfono, ej: María 0991234567';
+}
+
+// Cerrar
+if(p.cierra){
+if(S.actual&&S.actual.color&&S.actual.talle){
+S.carrito.push({producto:S.actual.producto,color:S.actual.color,talle:S.actual.talle});
+S.actual=null;
+}
+if(S.carrito.length===0)return 'No tenés nada en el carrito. ¿Qué te muestro?';
+S.esperando='datos';
+S.cola=[];
+var tot=0;
+for(var i=0;i<S.carrito.length;i++)tot+=S.carrito[i].producto.precio;
+return 'Ok! '+S.carrito.length+' producto(s), '+fmt(tot)+' + envío.\nPasame nombre y teléfono';
+}
+
+// Quiere otro
+if(p.quiereOtro&&S.actual){
+var cat=getCat();
+if(cat&&CAT[cat].length>1){
+var nuevo=randProd(cat,S.actual.producto.id);
+return mostrarProd(nuevo,cat,S.cola,'Te muestro otro:\n\n');
+}
+return 'No tengo más de eso. ¿Qué más te muestro?';
+}
+
+// Donde quedamos
+if(p.dondeQuedamos){
+if(S.esperando==='datos'){
+return 'Estábamos cerrando tu pedido. Pasame tu nombre y teléfono para coordinar.';
+}
+if(S.actual){
+var pr=S.actual.producto;
+if(!S.actual.color){
+return 'Estábamos viendo '+pr.nombre+'.\nColores disponibles: '+pr.colores.join(', ')+'\n\n¿Cuál preferís?';
+}
+if(!S.actual.talle){
+return 'Estábamos con '+pr.nombre+' '+S.actual.color+'.\nTalles disponibles: '+pr.talles.join(', ')+'\n\n¿Cuál necesitás?';
+}
+return 'Tenés '+pr.nombre+' '+S.actual.color+' talle '+S.actual.talle+' listo.\n\n¿Te lo agrego al carrito?';
+}
+if(S.carrito.length>0){
+return 'Tenés '+S.carrito.length+' producto(s) en el carrito.\n\n¿Querés agregar algo más o cerramos el pedido?';
+}
+return 'Todavía no elegiste nada. ¿Qué te gustaría ver? Tengo remeras, jeans, buzos, camperas...';
+}
+
+// Confirmar
+if(p.confirma&&S.actual){
+var pr=S.actual.producto;
+if(!S.actual.talle&&pr.talles.length===1)S.actual.talle='único';
+if(S.actual.color&&S.actual.talle){
+S.carrito.push({producto:S.actual.producto,color:S.actual.color,talle:S.actual.talle});
+S.actual=null;
+if(S.cola.length>0){
+var nc=S.cola.shift();
+var np=randProd(nc);
+return mostrarProd(np,nc,S.cola,'Agregado! 🛒\n\nAhora '+nc+':\n\n');
+}
+S.esperando=null;
+return 'Agregado! 🛒 ('+S.carrito.length+' en carrito)\n\n¿Algo más o cerramos?';
+}
+if(!S.actual.color)return '¿Qué color? Hay '+pr.colores.join(', ');
+if(!S.actual.talle)return '¿Qué talle? Hay '+pr.talles.join(', ');
+}
+
+// Color/Talle
+if((p.color||p.talle)&&S.actual){
+var pr=S.actual.producto;
+if(p.color){
+var vc=findColor(pr,p.color);
+if(vc){
+S.actual.color=vc;
+if(pr.talles.length===1)S.actual.talle='único';
+}else return 'Ese color no hay. Tengo: '+pr.colores.join(', ');
+}
+if(p.talle){
+var found=false;
+for(var i=0;i<pr.talles.length;i++){
+if(pr.talles[i]===p.talle){found=true;break;}
+}
+if(found)S.actual.talle=p.talle;
+else return 'Ese talle no hay. Tengo: '+pr.talles.join(', ');
+}
+if(p.cats.length>0){
+for(var i=0;i<p.cats.length;i++)S.cola.push(p.cats[i]);
+}
+if(S.actual.color&&S.actual.talle){
+S.esperando='confirmar';
+var tt=S.actual.talle==='único'?'':', talle '+S.actual.talle;
+var hm=S.cola.length>0?'\nDespués seguimos.':'';
+return pr.nombre+' '+S.actual.color+tt+', '+fmt(pr.precio)+'.'+hm+'\n\n¿La agrego?';
+}
+if(S.actual.color){
+S.esperando='talle';
+return S.actual.color.charAt(0).toUpperCase()+S.actual.color.slice(1)+', ¿talle? Hay '+pr.talles.join(', ');
+}
+return 'Talle '+S.actual.talle+', ¿color? Hay '+pr.colores.join(', ');
+}
+
+// Catálogo
+if(p.catalogo){
+S.saludado=true;
+return 'Tengo:\n• Remeras (desde '+fmt(85000)+')\n• Jeans (desde '+fmt(180000)+')\n• Buzos (desde '+fmt(165000)+')\n• Camperas (desde '+fmt(250000)+')\n• Accesorios\n\n¿Qué te interesa?';
+}
+
+// Envío
+if(p.envio){
+var r='Sí! Enviamos a todo el país. Asunción ~'+fmt(30000)+'.';
+if(S.actual||S.carrito.length)r+='\n\n¿Seguimos?';
+return r;
+}
+
+// Marca
+if(p.marca){
+var cat=p.cats[0]||'remeras';
+var pr=randProd(cat);
+S.saludado=true;
+return mostrarProd(pr,cat,p.cats.slice(1),p.marca.charAt(0).toUpperCase()+p.marca.slice(1)+' no manejo, pero tengo:\n\n');
+}
+
+// Categorías
+if(p.cats.length>0){
+S.saludado=true;
+var first=p.cats[0];
+S.cola=p.cats.slice(1);
+var pr=randProd(first);
+S.actual={producto:pr,color:null,talle:null};
+if(p.color){var vc=findColor(pr,p.color);if(vc)S.actual.color=vc;}
+if(p.talle){
+for(var i=0;i<pr.talles.length;i++){
+if(pr.talles[i]===p.talle){S.actual.talle=p.talle;break;}
+}
+}
+if(pr.talles.length===1&&pr.talles[0].toLowerCase()==='único')S.actual.talle='único';
+
+if(S.actual.color&&S.actual.talle){
+S.esperando='confirmar';
+var tt=S.actual.talle==='único'?'':', talle '+S.actual.talle;
+return pr.nombre+' '+S.actual.color+tt+', '+fmt(pr.precio)+'.\n\n¿La agrego?';
+}
+if(S.actual.color){
+S.esperando='talle';
+return pr.nombre+' '+S.actual.color+', '+fmt(pr.precio)+'.\n¿Talle? Hay '+pr.talles.join(', ');
+}
+S.esperando='color';
+var pt=S.cola.length?'\nDespués vemos '+S.cola.join(' y ')+'.':'';
+return 'Tengo '+pr.nombre+', '+fmt(pr.precio)+'.\nColores: '+pr.colores.join(', ')+pt+'\n\n¿Cuál te gusta?';
+}
+
+// Saludo
+if(p.saludo){
+if(S.saludado)return '¿Qué necesitás?';
+S.saludado=true;
+return pick(['Hola! ¿Qué buscás?','Buenas! ¿En qué te ayudo?','Hola! Decime 😊']);
+}
+
+// Fallbacks
+if(S.esperando==='color'&&S.actual)return '¿Qué color? Hay '+S.actual.producto.colores.join(', ');
+if(S.esperando==='talle'&&S.actual)return '¿Qué talle? Hay '+S.actual.producto.talles.join(', ');
+if(S.esperando==='confirmar')return '¿Te lo agrego?';
+
+return 'No entendí bien. Podés decirme "donde quedamos" para retomar, o contame qué buscás.';
+}
+
+function addMsg(t,s){
+var c=document.getElementById('chat');
+var d=document.createElement('div');
+d.className='msg '+(s?'sent':'recv');
+var tm=new Date().toLocaleTimeString('es-PY',{hour:'2-digit',minute:'2-digit'});
+d.innerHTML=t.replace(/\n/g,'<br>')+'<div class="t">'+tm+'</div>';
+c.appendChild(d);
+c.scrollTop=c.scrollHeight;
+}
+
+function addQR(){
+var c=document.getElementById('chat');
+var d=document.createElement('div');
+d.className='msg recv';
+d.innerHTML='<div class="qr"><img src="https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=https://pagopar.com/'+Date.now()+'" alt="QR"><p>Escaneá para pagar</p></div>';
+c.appendChild(d);
+c.scrollTop=c.scrollHeight;
+}
+
+function showTyping(){
+var c=document.getElementById('chat');
+var d=document.createElement('div');
+d.id='typing';
+d.className='typing';
+d.innerHTML='<span></span><span></span><span></span>';
+c.appendChild(d);
+c.scrollTop=c.scrollHeight;
+}
+
+function hideTyping(){
+var t=document.getElementById('typing');
+if(t)t.parentNode.removeChild(t);
+}
+
+function send(){
+var i=document.getElementById('input');
+var t=i.value.trim();
+if(!t)return;
+addMsg(t,true);
+i.value='';
+showTyping();
+setTimeout(function(){
+hideTyping();
+addMsg(resp(t),false);
+},300+Math.random()*400);
+}
+
+function q(t){
+document.getElementById('input').value=t;
+send();
+}
+
+function elegirAuto(){
+if(!S.actual){
+q('Quiero una remera');
+return;
+}
+var prod=S.actual.producto;
+var texto='';
+if(!S.actual.color){
+texto=prod.colores[0];
+}
+if(!S.actual.talle&&prod.talles[0].toLowerCase()!=='único'){
+var idx=Math.floor(prod.talles.length/2);
+if(texto)texto+=' ';
+texto+=prod.talles[idx];
+}
+if(!texto)texto='Dale';
+q(texto);
+}
+
+function reset(){
+document.getElementById('chat').innerHTML='';
+S={nombre:null,saludado:false,carrito:[],actual:null,cola:[],esperando:null};
+}
+</script>
+</body>
+</html>
